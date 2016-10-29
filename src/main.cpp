@@ -8,25 +8,17 @@ using namespace cv;
 int main(int argc, char *argv[])
 {
 
-  std::string fileLocation = "320px-Flag_of_Japansvg.png";
+//  std::string fileLocation = "320px-Flag_of_Japansvg.png";
 
   //std: string fileLocation = argv[1];
 
-  Mat img = imread(fileLocation);
+//  Mat img = imread(fileLocation);
 
-  cv::Mat img_HSV;
-  cv::cvtColor(img,img_HSV,CV_BGR2HSV); //converting from rgb to hsv
+//  cv::Mat img_HSV;
+//  cv::cvtColor(img,img_HSV,CV_BGR2HSV); //converting from rgb to hsv
 
 
-  std::vector<cv::Mat> channels;
-  vector<vector <cv::Point> > contours;
 
-  cv::Mat hueOrig = channels.at(0).clone();
-  cv::Mat threshLower,threshHigher,result;
-
-  cv::threshold(hueOrig,threshLower,20,255, CV_THRESH_BINARY);
-  cv::threshold(hueOrig,threshHigher,80,255,CV_THRESH_BINARY_INV);
-  result = threshLower & threshHigher;
   //std::vector<cv::Mat> channels;
   VideoCapture cap(0); // open the default camera
   if(!cap.isOpened())  // check if we succeeded
@@ -36,15 +28,24 @@ int main(int argc, char *argv[])
 
    Mat edges;
    namedWindow("edges",1);
-   for(int i = 0; i< contours.size(); i++)
+   std::vector<cv::Mat> channels;
+   vector<vector <cv::Point> > contours;
+   Mat frame;
+   while (true)
    {
-       Mat frame;
        cap >> frame; // get a new frame from camera
+       cv::Mat hueOrig = channels.at(0).clone();
+       cv::Mat threshLower,threshHigher,result;
+
+       cv::threshold(hueOrig,threshLower,20,255, CV_THRESH_BINARY);
+       cv::threshold(hueOrig,threshHigher,80,255,CV_THRESH_BINARY_INV);
+       result = threshLower & threshHigher;
        cvtColor(frame, edges, COLOR_BGR2GRAY);
        GaussianBlur(edges, edges, Size(7,7), 1.5, 1.5);
        Canny(edges, edges, 0, 30, 3);
        imshow("edges", edges);
        imshow("Thesholded",result);
+       imshow("frame",frame);
        if(waitKey(30) >= 0)
        {
           break;
